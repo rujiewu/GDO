@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gdo-core"
+version = "0.1.0"
+description = "Core Goal-Driven Data Optimization pipeline for multimodal instruction tuning."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+dependencies = [
+  "numpy>=1.24",
+  "opencv-python-headless>=4.8",
+  "Pillow>=10.0",
+  "scikit-learn>=1.3",
+  "torch>=2.1",
+  "transformers>=4.50",
+  "tqdm>=4.66",
+]
+
+[project.scripts]
+gdo-extract = "gdo.extract_six_metrics:main"
+gdo-merge = "gdo.merge_metrics:main"
+gdo-build = "gdo.build_pair:main"
+gdo-resample = "gdo.resample_frames:main"
+
+[tool.setuptools]
+include-package-data = false
+
+[tool.setuptools.packages.find]
+include = ["gdo*"]
