@@ -1,5 +1,7 @@
 # Less Data, Faster Convergence: Goal-Driven Data Optimization for Multimodal Instruction Tuning
 
+Accepted to **ECCV 2026**.
+
 <p align="center">
   <img width="960" src="assets/teaser.png" alt="GDO teaser">
 </p>
@@ -12,7 +14,7 @@ by [**Rujie Wu**](https://rujiewu.github.io/), [**Haozhe Zhao**](https://haozhez
 
 ## Abstract
 
-Multimodal instruction tuning is often compute-inefficient because training budget is spread over large mixed image-video pools whose utility is highly uneven. We present **Goal-Driven Data Optimization (GDO)**, a framework that computes six sample descriptors for each candidate and constructs optimized 1x training subsets for different goals. Under one fixed one-epoch Qwen3-VL-8B-Instruct training and evaluation recipe, GDO uses far fewer training samples than Uni-10x while converging faster and reaching stronger reported performance. Relative to the fixed 512k-sample Uni-10x baseline, GDO reaches the Uni-10x reference after 35.4k samples on MVBench, 26.6k on VideoMME, 27.3k on MLVU, and 34.7k on LVBench, while improving final Accuracy by +1.38, +1.67, +3.08, and +0.84 pp, respectively.
+Multimodal instruction tuning is often compute-inefficient because training budget is spread over large mixed image-video pools whose utility is highly uneven. We present **Goal-Driven Data Optimization (GDO)**, a framework that computes six sample descriptors for each candidate and constructs optimized 1x training subsets for different goals. Under one fixed one-epoch Qwen3-VL-8B-Instruct training and evaluation recipe on 32 H20 GPUs, GDO uses far fewer training samples than Uni-10x while converging faster and reaching higher benchmark accuracy. Relative to the fixed 512k-sample Uni-10x baseline, GDO reaches the Uni-10x reference after 35.4k samples on MVBench, 26.6k on VideoMME, 27.3k on MLVU, and 34.7k on LVBench, while improving Accuracy by +1.38, +1.67, +3.08, and +0.84 pp, respectively. The gains are largest on MVBench and MLVU, while LVBench improves more modestly, consistent with its ultra-long-video setting and the mismatch between that benchmark and the short-video/image-dominant training pool. Across MinLoss, Diverse, Temp, and Temp+, stronger temporal pressure shifts the allocation toward video-centric supervision, with Temp+ giving the strongest overall profile. These results indicate that goal-driven data optimization improves sample efficiency and convergence under this fixed training contract. Code is available at https://github.com/rujiewu/GDO.
 
 ## Introduction
 
@@ -238,9 +240,10 @@ bash scripts/build.sh
 [`scripts/train_sft.sh`](scripts/train_sft.sh) wraps one-epoch `Qwen3-VL-8B-Instruct` SFT with [`ms-swift`](https://github.com/modelscope/ms-swift).
 
 ```bash
-cp configs/train_qwen3_vl_8b_instruct.env /tmp/train.env
+mkdir -p local
+cp configs/train_qwen3_vl_8b_instruct.env local/train.env
 # edit MODEL_PATH, DATA_PATH, and OUTPUT_DIR
-bash scripts/train_sft.sh /tmp/train.env
+bash scripts/train_sft.sh local/train.env
 ```
 
 The training contract matches the paper: one backbone, one SFT recipe, one checkpoint cadence, and only the training subset changes.
@@ -250,9 +253,10 @@ The training contract matches the paper: one backbone, one SFT recipe, one check
 [`scripts/eval_lmms.sh`](scripts/eval_lmms.sh) wraps [`lmms-eval`](https://github.com/EvolvingLMMs-Lab/lmms-eval) for the four paper benchmarks.
 
 ```bash
-cp configs/eval_longvideo.env /tmp/eval.env
+mkdir -p local
+cp configs/eval_longvideo.env local/eval.env
 # edit CKPT_PATH and OUTPUT_ROOT
-bash scripts/eval_lmms.sh /tmp/eval.env
+bash scripts/eval_lmms.sh local/eval.env
 ```
 
 The default task list is:
