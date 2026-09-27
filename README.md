@@ -1,7 +1,5 @@
 # Less Data, Faster Convergence: Goal-Driven Data Optimization for Multimodal Instruction Tuning
 
-Accepted to **ECCV 2026**.
-
 <p align="center">
   <img width="960" src="assets/teaser.png" alt="GDO teaser">
 </p>
